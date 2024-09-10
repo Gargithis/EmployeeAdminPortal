@@ -3,6 +3,8 @@ using EmployeeAdminPortal.Models;
 using EmployeeAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
+using System.Net;
 
 namespace EmployeeAdminPortal.Controllers
 {
@@ -18,13 +20,20 @@ namespace EmployeeAdminPortal.Controllers
             this.dbContext = dbContext;
         }
 
+        #region INDEX
+        /// <summary>
+        /// Get the list of all employees:
+        /// </summary>
+        /// <returns>the list of employees</returns>
         [HttpGet]
         public IActionResult GetAllEmployees()
         {
             var allEmployees = dbContext.Employees.ToList();
             return Ok(allEmployees);
         }
+        #endregion
 
+        #region GET BY ID
         [HttpGet]
         [Route("{id:guid}")]
         public IActionResult GetEmployeeById(Guid id)
@@ -36,15 +45,20 @@ namespace EmployeeAdminPortal.Controllers
             }
             return Ok(employee);
         }
+        #endregion
 
+        #region INSERT
         [HttpPost]
         public IActionResult AddEmployee(AddEmployeeDTO addEmployeeDto)
         {
             var emplooyeeEntity = new Employee() { 
                 Name = addEmployeeDto.Name,
                 Email = addEmployeeDto.Email,
+                Address = addEmployeeDto.Address,
+                Country = addEmployeeDto.Country,
                 Phone = addEmployeeDto.Phone,
-                Salary = addEmployeeDto.Salary
+                Salary = addEmployeeDto.Salary,
+                DateofEmployment = addEmployeeDto.DateofEmployment,
             };
             
             dbContext.Employees.Add(emplooyeeEntity);
@@ -52,7 +66,9 @@ namespace EmployeeAdminPortal.Controllers
             
             return Ok(emplooyeeEntity);
         }
+        #endregion
 
+        #region UPDATE
         [HttpPut]
         [Route("{id:guid}")]
         public IActionResult UpdateEmployee(Guid id, UpdateEmployeeDTO updateEmployeeDto)
@@ -64,13 +80,18 @@ namespace EmployeeAdminPortal.Controllers
             }
             employee.Name = updateEmployeeDto.Name;
             employee.Email = updateEmployeeDto.Email;
+            employee.Address = updateEmployeeDto.Address;
+            employee.Country = updateEmployeeDto.Country;
             employee.Phone = updateEmployeeDto.Phone;
             employee.Salary = updateEmployeeDto.Salary;
+            employee.DateofEmployment = updateEmployeeDto.DateofEmployment;
             
             dbContext.SaveChanges();
             return Ok(employee);
         }
+        #endregion
 
+        #region DELETE
         [HttpDelete]
         [Route("{id:guid}")]
         public IActionResult DeleteEmployee(Guid id) 
@@ -85,5 +106,6 @@ namespace EmployeeAdminPortal.Controllers
             dbContext.SaveChanges();
             return Ok(employee);
         }
+        #endregion
     }
 }
